@@ -1,3 +1,5 @@
+// this function is used only once to insert products into a database
+
 import axios from "axios";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
