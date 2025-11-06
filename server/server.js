@@ -2,7 +2,9 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import connectDB from "./db/connect.js";
-import productRouter from "./routes/products.route.js";
+import productRouter from "./routes/products.routes.js";
+import cartRouter from "./routes/cart.routes.js";
+import checkoutRouter from "./routes/checkout.routes.js";
 
 const app = express();
 
@@ -16,7 +18,9 @@ app.use(express.json());
 connectDB();
 
 // Routes
-app.use("/api/products", productRouter)
+app.use("/api/products", productRouter);
+app.use("/api/cart", cartRouter);
+app.use("api/checkout", checkoutRouter)
 
 // Root test route
 app.get("/", (req, res) => {
