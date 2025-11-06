@@ -1,7 +1,5 @@
-import React from "react";
 import { useCartStore } from "../store/useCartStore";
 import { Trash2 } from "lucide-react";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -34,7 +32,6 @@ const Cart = () => {
         <button
           onClick={() => {
             clearCart();
-            toast.success("Cart cleared!");
           }}
           className="rounded-lg border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
         >
@@ -51,20 +48,19 @@ const Cart = () => {
           >
             <div className="flex items-center gap-4">
               <img
-                src={`https://via.placeholder.com/80x80?text=${item.name}`}
+                src={item.image}
                 alt={item.name}
-                className="h-20 w-20 rounded-md object-cover"
+                className="h-20 w-20 rounded-md object-contain"
               />
               <div>
                 <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                <p className="text-sm text-gray-500">₹{item.price}</p>
+                <p className="text-sm text-gray-500">${item.price}</p>
                 <p className="text-sm text-gray-600">Qty: {item.qty}</p>
               </div>
             </div>
             <button
               onClick={() => {
                 removeFromCart(item._id);
-                toast.success("Removed from cart");
               }}
               className="mt-3 flex items-center gap-2 rounded-md bg-red-100 px-3 py-1 text-sm text-red-600 hover:bg-red-200 sm:mt-0"
             >

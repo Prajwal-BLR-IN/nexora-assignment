@@ -27,7 +27,6 @@ const Checkout = () => {
     };
 
     clearCart();
-    toast.success("Checkout successful!");
     navigate("/receipt", { state: { receiptData } });
   };
 
@@ -94,7 +93,7 @@ const Checkout = () => {
             ))}
           </ul>
           <div className="mt-3 border-t border-gray-200 pt-3 text-right font-semibold text-gray-900">
-            Total: ₹{total.toLocaleString()}
+            Total: ${total.toLocaleString()}
           </div>
 
           <button

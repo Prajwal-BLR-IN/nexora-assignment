@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; // 1. Import useState
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { ShoppingBag } from "lucide-react";
@@ -8,8 +8,13 @@ import toast from "react-hot-toast";
 import api from "../api/axios";
 import { assets } from "../assets/assets";
 
-// 2. Put your hero images into an array
 const heroImages = [assets.hero1, assets.hero2, assets.hero3, assets.hero4];
+
+// 1. Create the new array with the cloned first image at the end
+const imagesWithClone = [...heroImages, heroImages[0]];
+// This array is now [img1, img2, img3, img4, img1_clone]
+
+const transitionDuration = 1000; // Animation duration in ms (matches 'duration-1000')
 
 const fetchProducts = async () => {
   const res = await api.get("/products");
@@ -20,8 +25,9 @@ const ProductGrid = () => {
   const { products, setProducts, searchQuery } = useProductStore();
   const { addToCart } = useCartStore();
 
-  // 3. Add state to track the current image index
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // 2. Add new state to control the CSS transition
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products"],
@@ -32,16 +38,40 @@ const ProductGrid = () => {
     if (data) setProducts(data);
   }, [data, setProducts]);
 
-  // 4. Use an effect to create the sliding interval
+  // 3. This effect now just increments the index
   useEffect(() => {
     const interval = setInterval(() => {
-      // Move to the next image, looping back to 0 at the end
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 3000); // Change image every 3000ms (3 seconds)
-
-    // Clean up the interval when the component unmounts
+      setCurrentImageIndex((prevIndex) => prevIndex + 1);
+    }, 3000); // 3-second interval
     return () => clearInterval(interval);
-  }, []); // The empty array [] ensures this effect runs only once
+  }, []);
+
+  // 4. This NEW effect handles the infinite loop logic
+  useEffect(() => {
+    // Check if we are on the last slide (the clone)
+    if (currentImageIndex === imagesWithClone.length - 1) {
+      // Wait for the slide animation to finish (1000ms)
+      const timer = setTimeout(() => {
+        // 1. Disable the transition animation
+        setIsTransitionEnabled(false);
+        // 2. Instantly jump back to the REAL first slide (index 0)
+        setCurrentImageIndex(0);
+      }, transitionDuration);
+
+      return () => clearTimeout(timer);
+    }
+
+    // This part re-enables the transition *after* the jump
+    if (currentImageIndex === 0 && !isTransitionEnabled) {
+      // Use a tiny delay to ensure React renders the jump *before*
+      // re-enabling the transition for the next slide.
+      const timer = setTimeout(() => {
+        setIsTransitionEnabled(true);
+      }, 50); // Small 50ms delay
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentImageIndex, isTransitionEnabled]); // Run when index changes
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -62,17 +92,31 @@ const ProductGrid = () => {
 
   return (
     <section>
-      {/* 5. This is the new Hero Carousel section */}
-      <div className="relative -mt-3 h-[60vh] w-full md:-mt-6">
-        {heroImages.map((imageSrc, index) => (
-          <img
-            key={index}
-            src={imageSrc}
-            alt="hero image"
-            className={`absolute top-0 left-0 h-full w-full scale-x-107 object-cover transition-opacity duration-1000 ease-in-out ${index === currentImageIndex ? "opacity-100" : "opacity-0"} `}
-          />
-        ))}
+      {/* --- HERO CAROUSEL SECTION --- */}
+      <div className="relative w-full overflow-hidden">
+        <div
+          className={`flex ${
+            // 5. Conditionally apply the transition class
+            isTransitionEnabled
+              ? "transition-transform duration-1000 ease-in-out"
+              : ""
+          }`}
+          style={{
+            transform: `translateX(-${currentImageIndex * 100}%)`,
+          }}
+        >
+          {/* 6. Map over the new 'imagesWithClone' array */}
+          {imagesWithClone.map((imageSrc, index) => (
+            <img
+              key={index}
+              src={imageSrc}
+              alt="hero image"
+              className="w-full min-w-full object-contain object-center"
+            />
+          ))}
+        </div>
       </div>
+      {/* --- END HERO CAROUSEL SECTION --- */}
 
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="mb-6">
@@ -86,7 +130,7 @@ const ProductGrid = () => {
           {filtered.map((product) => (
             <div
               key={product._id}
-              className="group relative rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md"
+              className="group relative rounded-2xl border border-gray-200 bg-[#ffefdf3f] p-4 shadow-lg transition-all hover:-translate-y-1.5 hover:shadow-xl"
             >
               <img
                 src={product.image || "https://via.placeholder.com/300"}
@@ -95,15 +139,12 @@ const ProductGrid = () => {
               />
 
               <div className="mt-4">
-                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-[#fcb900]">
+                <h3 className="text-lg font-semibold text-gray-800">
                   {product.name}
                 </h3>
-                <p className="mt-1 text-sm text-gray-600">
-                  {product.category || "Category"}
-                </p>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-xl font-bold text-gray-900">
-                    ₹{product.price}
+                    ${product.price}
                   </span>
                   <button
                     onClick={() => handleAddToCart(product)}

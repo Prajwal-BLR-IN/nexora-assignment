@@ -12,82 +12,90 @@ const Navbar = () => {
 
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
+  const [showPromo, setShowPromo] = useState(true);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    // The nav element itself is the container for all parts
-    <nav className="sticky top-0 z-50 w-full border-b border-black/10 md:bg-white/70 md:shadow-lg md:backdrop-blur-xl">
-      {location.pathname === "/" && <PromoHeader />}
-      {/* Main Navbar Content */}
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        {/* Logo */}
-        <div
-          className="flex cursor-pointer items-center space-x-2"
-          onClick={() => navigate("/")}
-        >
-          <h1 className="text-2xl font-bold text-gray-900">nexora</h1>
+    // 1. Wrap everything in a React Fragment
+    <>
+      {/* 2. This 'nav' now ONLY contains the main navbar */}
+      <nav className="sticky top-0 z-30 w-full border-b border-black/10 bg-white/70 shadow-lg backdrop-blur-xl">
+        {location.pathname === "/" && showPromo && (
+          <PromoHeader setShowPromo={setShowPromo} />
+        )}
+        {/* Main Navbar Content */}
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+          {/* Logo */}
+          <div
+            className="flex cursor-pointer items-center space-x-2"
+            onClick={() => navigate("/")}
+          >
+            <h1 className="text-2xl font-bold text-gray-900">nexora</h1>
+          </div>
+
+          {/* Left navbar section (Desktop) */}
+          <div className="flex items-center">
+            <div className="hidden gap-4 font-medium text-gray-800 md:flex">
+              <a href="#" className="hover:text-gray-950">
+                Men
+              </a>
+              <a href="#" className="hover:text-gray-950">
+                Women
+              </a>
+              <a href="#" className="hover:text-gray-950">
+                Accessories
+              </a>
+              <a href="#" className="hover:text-gray-950">
+                Blogs
+              </a>
+            </div>
+
+            {/* Search Bar (Desktop) */}
+            <div className="mx-6 hidden flex-1 items-center md:flex">
+              <div className="flex w-md">
+                <input
+                  type="text"
+                  placeholder="Search for products"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full rounded-l-lg border border-gray-300 px-3 py-2 focus:border-[#fcb900] focus:outline-none"
+                />
+                <button className="flex items-center gap-1 rounded-r-lg bg-[#fcb900] px-4 py-2 font-medium text-gray-900 hover:bg-[#f0a500]">
+                  <Search size={18} />
+                  Search
+                </button>
+              </div>
+            </div>
+
+            {/* Icons */}
+            <div className="flex items-center space-x-5 text-gray-800">
+              <div
+                className="relative cursor-pointer"
+                onClick={() => navigate("/cart")}
+              >
+                <ShoppingCart size={22} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#fcb900] text-xs font-semibold text-gray-900">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+              <User size={22} className="cursor-pointer" />
+
+              {/* Mobile Menu Hamburger Button */}
+              <div
+                className="cursor-pointer md:hidden"
+                onClick={() => setMenuOpen(true)}
+              >
+                <Menu size={22} />
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Left navbar section (Desktop) */}
-        <div className="flex items-center">
-          <div className="hidden gap-4 font-medium text-gray-800 md:flex">
-            <a href="#" className="hover:text-gray-950">
-              Men
-            </a>
-            <a href="#" className="hover:text-gray-950">
-              Women
-            </a>
-            <a href="#" className="hover:text-gray-950">
-              Accessories
-            </a>
-            <a href="#" className="hover:text-gray-950">
-              Blogs
-            </a>
-          </div>
-
-          {/* Search Bar (Desktop) */}
-          <div className="mx-6 hidden flex-1 items-center md:flex">
-            <div className="flex w-md">
-              <input
-                type="text"
-                placeholder="Search for products"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-l-lg border border-gray-300 px-3 py-2 focus:border-[#fcb900] focus:outline-none"
-              />
-              <button className="flex items-center gap-1 rounded-r-lg bg-[#fcb900] px-4 py-2 font-medium text-gray-900 hover:bg-[#f0a500]">
-                <Search size={18} />
-                Search
-              </button>
-            </div>
-          </div>
-
-          {/* Icons */}
-          <div className="flex items-center space-x-5 text-gray-800">
-            <div
-              className="relative cursor-pointer"
-              onClick={() => navigate("/cart")}
-            >
-              <ShoppingCart size={22} />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#fcb900] text-xs font-semibold text-gray-900">
-                  {cartCount}
-                </span>
-              )}
-            </div>
-            <User size={22} className="cursor-pointer" />
-
-            {/* Mobile Menu Hamburger Button */}
-            <div
-              className="cursor-pointer md:hidden"
-              onClick={() => setMenuOpen(true)} // Changed to only open
-            >
-              <Menu size={22} />
-            </div>
-          </div>
-        </div>
-      </div>
+      </nav>
+      {/* 3. The 'nav' element is closed. The menu and overlay are now SIBLINGS. */}
 
       {/* --- Mobile Menu & Overlay --- */}
 
@@ -126,7 +134,7 @@ const Navbar = () => {
             type="text"
             placeholder="Search products..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.targe.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 pl-10 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus:outline-none"
           />
           <Search
@@ -167,7 +175,7 @@ const Navbar = () => {
           </a>
         </nav>
       </div>
-    </nav>
+    </>
   );
 };
 

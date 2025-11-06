@@ -1,3 +1,4 @@
+import { CircleCheck } from "lucide-react";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -22,8 +23,9 @@ const Receipt = () => {
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 text-center">
-      <h2 className="mb-2 text-2xl font-bold text-gray-900">
-        🎉 Checkout Successful!
+      <h2 className="mb-2 flex flex-col items-center justify-center gap-3 text-2xl font-bold text-gray-900">
+        <CircleCheck size={50} color="#00b840" strokeWidth={2} />
+        Checkout Successful!
       </h2>
       <p className="mb-6 text-gray-600">
         Thanks for shopping with us,{" "}
