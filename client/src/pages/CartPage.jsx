@@ -1,11 +1,10 @@
 import { useCartStore } from "../store/useCartStore";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const navigate = useNavigate();
-
-  const { cart, removeFromCart, clearCart } = useCartStore();
+  const { cart, removeFromCart, clearCart, updateQuantity } = useCartStore();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
@@ -30,9 +29,7 @@ const Cart = () => {
       <div className="flex items-center justify-between border-b pb-4">
         <h2 className="text-2xl font-semibold text-gray-900">Shopping Cart</h2>
         <button
-          onClick={() => {
-            clearCart();
-          }}
+          onClick={() => clearCart()}
           className="rounded-lg border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
         >
           Clear All
@@ -54,14 +51,33 @@ const Cart = () => {
               />
               <div>
                 <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                <p className="text-sm text-gray-500">${item.price}</p>
-                <p className="text-sm text-gray-600">Qty: {item.qty}</p>
+                <p className="text-sm text-gray-500">₹{item.price}</p>
+
+                {/* Quantity Controller */}
+                <div className="mt-2 flex items-center gap-2">
+                  <button
+                    onClick={() =>
+                      updateQuantity(item._id, Math.max(item.qty - 1, 1))
+                    }
+                    className="rounded-md bg-gray-200 px-2 hover:bg-gray-300"
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <span className="w-6 text-center text-gray-700">
+                    {item.qty}
+                  </span>
+                  <button
+                    onClick={() => updateQuantity(item._id, item.qty + 1)}
+                    className="rounded-md bg-gray-200 px-2 hover:bg-gray-300"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
               </div>
             </div>
+
             <button
-              onClick={() => {
-                removeFromCart(item._id);
-              }}
+              onClick={() => removeFromCart(item._id)}
               className="mt-3 flex items-center gap-2 rounded-md bg-red-100 px-3 py-1 text-sm text-red-600 hover:bg-red-200 sm:mt-0"
             >
               <Trash2 size={16} /> Remove

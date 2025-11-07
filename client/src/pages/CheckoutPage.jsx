@@ -88,7 +88,7 @@ const Checkout = () => {
                 <span>
                   {item.name} × {item.qty}
                 </span>
-                <span>₹{(item.price * item.qty).toLocaleString()}</span>
+                <span>${(item.price * item.qty).toLocaleString()}</span>
               </li>
             ))}
           </ul>
@@ -98,7 +98,7 @@ const Checkout = () => {
 
           <button
             type="submit"
-            className="mt-4 w-full rounded-lg bg-[#fcb900] py-2 font-medium text-gray-900 hover:bg-[#f0a500]"
+            className="mt-4 w-full cursor-pointer rounded-lg bg-[#fcb900] py-2 font-medium text-gray-900 hover:bg-[#f0a500]"
           >
             Place Order
           </button>

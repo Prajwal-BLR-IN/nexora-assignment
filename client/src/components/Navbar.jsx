@@ -73,7 +73,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-5 text-gray-800">
               <div
                 className="relative cursor-pointer"
-                onClick={() => navigate("/cart")}
+                onClick={() => (navigate("/cart"), scrollTo(0, 0))}
               >
                 <ShoppingCart size={22} />
                 {cartCount > 0 && (

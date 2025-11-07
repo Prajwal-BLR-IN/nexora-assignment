@@ -57,7 +57,7 @@ const Receipt = () => {
       </div>
 
       <button
-        onClick={() => navigate("/")}
+        onClick={() => (navigate("/"), scrollTo(0, 0))}
         className="mt-6 rounded-lg bg-[#fcb900] px-5 py-2 font-medium text-gray-900 hover:bg-[#f0a500]"
       >
         Back to Shop
